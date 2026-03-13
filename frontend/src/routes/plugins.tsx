@@ -19,6 +19,7 @@ interface Plugin {
 }
 
 const API_BASE = import.meta.env.VITE_API_URL ?? 'https://your-server.com'
+const API_KEY = import.meta.env.VITE_API_KEY ?? 'your-api-key'
 
 const PLUGINS: Plugin[] = [
   {
@@ -32,7 +33,7 @@ const PLUGINS: Plugin[] = [
         n: 1,
         title: 'Get your API key',
         detail: 'In your server .env, set API_KEY to a secure random string. You\'ll use this in every request.',
-        code: `# backend/config/.env\nAPI_KEY=your-secure-random-key`,
+        code: `# backend/config/.env\nAPI_KEY=${API_KEY}`,
       },
       {
         n: 2,
@@ -48,7 +49,7 @@ const PLUGINS: Plugin[] = [
         n: 4,
         title: 'Search for the contact',
         detail: 'Add a "Get Contents of URL" action with these settings:',
-        code: `URL:    ${API_BASE}/api/v1/shortcuts/search?name=[name]\nMethod: GET\nHeaders:\n  X-API-Key: your-secure-random-key`,
+        code: `URL:    ${API_BASE}/api/v1/shortcuts/search?name=[name]\nMethod: GET\nHeaders:\n  X-API-Key: ${API_KEY}`,
       },
       {
         n: 5,
@@ -69,7 +70,7 @@ const PLUGINS: Plugin[] = [
         n: 8,
         title: 'Log the interaction',
         detail: 'Add another "Get Contents of URL" action:',
-        code: `URL:    ${API_BASE}/api/v1/shortcuts/log\nMethod: POST\nHeaders:\n  X-API-Key: your-secure-random-key\n  Content-Type: application/json\nBody (JSON):\n  {\n    "contact_id": [contact_id],\n    "sentiment":  [sentiment]\n  }`,
+        code: `URL:    ${API_BASE}/api/v1/shortcuts/log\nMethod: POST\nHeaders:\n  X-API-Key: ${API_KEY}\n  Content-Type: application/json\nBody (JSON):\n  {\n    "contact_id": [contact_id],\n    "sentiment":  [sentiment]\n  }`,
       },
       {
         n: 9,
