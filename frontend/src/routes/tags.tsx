@@ -163,7 +163,7 @@ export default function TagsPage() {
                     variant="ghost"
                     className="h-8 w-8 hover:text-[hsl(var(--destructive))]"
                     onClick={() => {
-                      if (confirm(`Delete tag "${tag.name}"?`)) deleteMutation.mutate(tag.id as never)
+                      if (confirm(`Delete tag "${tag.name}"?`)) deleteMutation.mutate(tag.id)
                     }}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -182,7 +182,7 @@ export default function TagsPage() {
             <DialogTitle className="gradient-text-neon">New Tag</DialogTitle>
           </DialogHeader>
           <TagForm
-            onSave={(name, color) => createMutation.mutate({ name, color } as never)}
+            onSave={(name, color) => createMutation.mutate({ name, color })}
             onClose={() => setShowCreate(false)}
             loading={createMutation.isPending}
           />

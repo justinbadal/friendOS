@@ -97,6 +97,7 @@ export interface DashboardStats {
   new_contacts_this_month: number
   overdue_contacts: Contact[]
   recent_interactions: RecentInteraction[]
+  recent_contacts: Contact[]
 }
 
 export interface ContactCreate {

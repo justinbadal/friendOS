@@ -58,7 +58,6 @@ export function ContactForm({ contact, onSuccess }: ContactFormProps) {
 
   const createMutation = useCreateContact(onSuccess)
   const updateMutation = useUpdateContact(contact?.id ?? '', onSuccess)
-  const mutation = isEditing ? updateMutation : createMutation
 
   const selectedTagIds: string[] = form.watch('tag_ids') ?? []
 
@@ -85,7 +84,11 @@ export function ContactForm({ contact, onSuccess }: ContactFormProps) {
       job_title: data.job_title || null,
       notes: data.notes || null,
     }
-    mutation.mutate(payload as never)
+    if (isEditing) {
+      updateMutation.mutate(payload)
+    } else {
+      createMutation.mutate(payload)
+    }
   }
 
   return (
@@ -216,8 +219,8 @@ export function ContactForm({ contact, onSuccess }: ContactFormProps) {
       </div>
 
       <DialogFooter>
-        <Button type="submit" disabled={mutation.isPending}>
-          {mutation.isPending ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Friend'}
+        <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+          {(createMutation.isPending || updateMutation.isPending) ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Friend'}
         </Button>
       </DialogFooter>
     </form>
