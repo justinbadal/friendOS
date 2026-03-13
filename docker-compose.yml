@@ -51,9 +51,11 @@ services:
       - "3000:3000"
     depends_on:
       - app
+    env_file:
+      - ./backend/config/.env
     environment:
-      - VITE_OIDC_ISSUER=https://id.fmmd.me
-      - VITE_OIDC_CLIENT_ID=7d93e03e-348c-47d7-9db5-6baa65d694e2
+      - VITE_OIDC_ISSUER=${OIDC_ISSUER}
+      - VITE_OIDC_CLIENT_ID=${OIDC_CLIENT_ID}
     develop:
       watch:
         - action: sync
