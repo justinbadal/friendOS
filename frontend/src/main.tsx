@@ -8,6 +8,7 @@ import DashboardPage from '@/routes/dashboard'
 import ContactsPage from '@/routes/contacts/index'
 import ContactDetailPage from '@/routes/contacts/detail'
 import TagsPage from '@/routes/tags'
+import PluginsPage from '@/routes/plugins'
 import ApiReferencePage from '@/routes/api-reference'
 import LoginPage from '@/routes/login'
 import CallbackPage from '@/routes/callback'
@@ -41,6 +42,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/contacts" element={<ContactsPage />} />
             <Route path="/contacts/:id" element={<ContactDetailPage />} />
             <Route path="/tags" element={<TagsPage />} />
+            <Route path="/plugins" element={<PluginsPage />} />
             <Route path="/api-reference" element={<ApiReferencePage />} />
           </Route>
         </Routes>

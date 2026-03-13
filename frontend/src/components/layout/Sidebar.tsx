@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, Tag, Heart, BookOpen, ChevronUp, LogOut } from 'lucide-react'
+import { LayoutDashboard, Users, Tag, Heart, BookOpen, ChevronUp, LogOut, Puzzle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { clearTokens, getUserEmail, getUserName } from '@/lib/auth'
 import {
@@ -15,6 +15,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/contacts', label: 'Friends', icon: Users },
   { href: '/tags', label: 'Tags', icon: Tag },
+  { href: '/plugins', label: 'Plugins', icon: Puzzle },
 ]
 
 export function Sidebar() {
