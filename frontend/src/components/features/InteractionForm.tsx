@@ -1,9 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { interactionsApi, type Contact, type Interaction } from '@/lib/api'
+import { type Contact, type Interaction } from '@/lib/api'
+import { useCreateInteraction, useUpdateInteraction } from '@/hooks/queries'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -49,9 +48,11 @@ const sentimentEmoji: Record<string, string> = {
 }
 
 export function InteractionForm({ contact, interaction, onSuccess }: InteractionFormProps) {
-  const qc = useQueryClient()
   const isEditing = !!interaction
   const fullName = [contact.first_name, contact.last_name].filter(Boolean).join(' ')
+
+  const createMutation = useCreateInteraction(contact.id, onSuccess)
+  const updateMutation = useUpdateInteraction(contact.id, onSuccess)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -63,37 +64,24 @@ export function InteractionForm({ contact, interaction, onSuccess }: Interaction
     },
   })
 
-  const mutation = useMutation({
-    mutationFn: (data: FormValues) =>
-      isEditing
-        ? interactionsApi.update(interaction.id, {
-            interaction_type: data.interaction_type,
-            sentiment: data.sentiment,
-            notes: data.notes || null,
-            interacted_at: data.interacted_at || null,
-          })
-        : interactionsApi.create({
-            contact_id: contact.id,
-            interaction_type: data.interaction_type,
-            sentiment: data.sentiment,
-            notes: data.notes || null,
-            interacted_at: data.interacted_at || null,
-          }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['contacts'] })
-      qc.invalidateQueries({ queryKey: ['contact', contact.id] })
-      qc.invalidateQueries({ queryKey: ['dashboard'] })
-      qc.invalidateQueries({ queryKey: ['interactions', contact.id] })
-      toast.success(isEditing ? 'Interaction updated' : `Interaction with ${contact.first_name} logged!`)
-      onSuccess?.()
-    },
-    onError: (err) => {
-      toast.error(`Error: ${err.message}`)
-    },
-  })
+  function onSubmit(data: FormValues) {
+    const payload = {
+      interaction_type: data.interaction_type,
+      sentiment: data.sentiment,
+      notes: data.notes || null,
+      interacted_at: data.interacted_at || null,
+    }
+    if (isEditing) {
+      updateMutation.mutate({ id: interaction.id, data: payload })
+    } else {
+      createMutation.mutate(payload)
+    }
+  }
+
+  const mutation = isEditing ? updateMutation : createMutation
 
   return (
-    <form onSubmit={form.handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <DialogHeader>
         <DialogTitle className="gradient-text-neon">{isEditing ? 'Edit Interaction' : 'Log Interaction'}</DialogTitle>
         <p className="text-sm text-[hsl(var(--muted-foreground))]">

@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Trash2, Tag as TagIcon, Pencil } from 'lucide-react'
-import { toast } from 'sonner'
-import { tagsApi, type Tag } from '@/lib/api'
+import { type Tag } from '@/lib/api'
+import { useTags, useCreateTag, useUpdateTag, useDeleteTag } from '@/hooks/queries'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -92,45 +91,13 @@ function TagForm({ initial, onSave, onClose, loading }: TagFormProps) {
 }
 
 export default function TagsPage() {
-  const qc = useQueryClient()
   const [showCreate, setShowCreate] = useState(false)
   const [editing, setEditing] = useState<Tag | null>(null)
 
-  const { data: tags = [], isLoading } = useQuery({
-    queryKey: ['tags'],
-    queryFn: tagsApi.list,
-  })
-
-  const createMutation = useMutation({
-    mutationFn: (data: { name: string; color: string }) => tagsApi.create(data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['tags'] })
-      setShowCreate(false)
-      toast.success('Tag created')
-    },
-    onError: () => toast.error('Failed to create tag'),
-  })
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, name, color }: { id: string; name: string; color: string }) =>
-      tagsApi.update(id, { name, color }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['tags'] })
-      setEditing(null)
-      toast.success('Tag updated')
-    },
-    onError: () => toast.error('Failed to update tag'),
-  })
-
-  const deleteMutation = useMutation({
-    mutationFn: tagsApi.delete,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['tags'] })
-      qc.invalidateQueries({ queryKey: ['contacts'] })
-      toast.success('Tag deleted')
-    },
-    onError: () => toast.error('Failed to delete tag'),
-  })
+  const { data: tags = [], isLoading } = useTags()
+  const createMutation = useCreateTag(() => setShowCreate(false))
+  const updateMutation = useUpdateTag(() => setEditing(null))
+  const deleteMutation = useDeleteTag()
 
   return (
     <div className="p-8 space-y-6">
@@ -196,7 +163,7 @@ export default function TagsPage() {
                     variant="ghost"
                     className="h-8 w-8 hover:text-[hsl(var(--destructive))]"
                     onClick={() => {
-                      if (confirm(`Delete tag "${tag.name}"?`)) deleteMutation.mutate(tag.id)
+                      if (confirm(`Delete tag "${tag.name}"?`)) deleteMutation.mutate(tag.id as never)
                     }}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -215,7 +182,7 @@ export default function TagsPage() {
             <DialogTitle className="gradient-text-neon">New Tag</DialogTitle>
           </DialogHeader>
           <TagForm
-            onSave={(name, color) => createMutation.mutate({ name, color })}
+            onSave={(name, color) => createMutation.mutate({ name, color } as never)}
             onClose={() => setShowCreate(false)}
             loading={createMutation.isPending}
           />
@@ -231,7 +198,7 @@ export default function TagsPage() {
           {editing && (
             <TagForm
               initial={editing}
-              onSave={(name, color) => updateMutation.mutate({ id: editing.id, name, color })}
+              onSave={(name, color) => updateMutation.mutate({ id: editing.id, data: { name, color } })}
               onClose={() => setEditing(null)}
               loading={updateMutation.isPending}
             />

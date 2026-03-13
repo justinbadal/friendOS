@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Plus, Search, X } from 'lucide-react'
-import { contactsApi, tagsApi, type Contact } from '@/lib/api'
+import { type Contact } from '@/lib/api'
+import { useContacts, useTags } from '@/hooks/queries'
 import { ContactCard } from '@/components/features/ContactCard'
 import { ContactForm } from '@/components/features/ContactForm'
 import { InteractionForm } from '@/components/features/InteractionForm'
@@ -16,15 +16,11 @@ export default function ContactsPage() {
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [logContact, setLogContact] = useState<Contact | null>(null)
 
-  const { data: contacts = [], isLoading } = useQuery({
-    queryKey: ['contacts', search, selectedTagId],
-    queryFn: () => contactsApi.list({ search: search || undefined, tag_id: selectedTagId || undefined }),
+  const { data: contacts = [], isLoading } = useContacts({
+    search: search || undefined,
+    tag_id: selectedTagId || undefined,
   })
-
-  const { data: tags = [] } = useQuery({
-    queryKey: ['tags'],
-    queryFn: tagsApi.list,
-  })
+  const { data: tags = [] } = useTags()
 
   return (
     <div className="p-8 space-y-6">

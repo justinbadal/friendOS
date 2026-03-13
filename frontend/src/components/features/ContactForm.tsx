@@ -1,9 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { contactsApi, tagsApi, type Contact, type ContactDetail } from '@/lib/api'
+import { type ContactDetail } from '@/lib/api'
+import { useCreateContact, useUpdateContact, useTags } from '@/hooks/queries'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -35,13 +34,8 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ contact, onSuccess }: ContactFormProps) {
-  const qc = useQueryClient()
   const isEditing = !!contact
-
-  const { data: tags = [] } = useQuery({
-    queryKey: ['tags'],
-    queryFn: () => tagsApi.list(),
-  })
+  const { data: tags = [] } = useTags()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -62,36 +56,9 @@ export function ContactForm({ contact, onSuccess }: ContactFormProps) {
     },
   })
 
-  const mutation = useMutation({
-    mutationFn: (data: FormValues) => {
-      const payload = {
-        ...data,
-        email: data.email || null,
-        last_name: data.last_name || null,
-        nickname: data.nickname || null,
-        phone: data.phone || null,
-        birthday: data.birthday || null,
-        how_we_met: data.how_we_met || null,
-        location: data.location || null,
-        company: data.company || null,
-        job_title: data.job_title || null,
-        notes: data.notes || null,
-      }
-      if (isEditing && contact) {
-        return contactsApi.update(contact.id, payload)
-      }
-      return contactsApi.create(payload)
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['contacts'] })
-      qc.invalidateQueries({ queryKey: ['dashboard'] })
-      toast.success(isEditing ? 'Friend updated!' : 'Friend added!')
-      onSuccess?.()
-    },
-    onError: (err) => {
-      toast.error(`Error: ${err.message}`)
-    },
-  })
+  const createMutation = useCreateContact(onSuccess)
+  const updateMutation = useUpdateContact(contact?.id ?? '', onSuccess)
+  const mutation = isEditing ? updateMutation : createMutation
 
   const selectedTagIds: string[] = form.watch('tag_ids') ?? []
 
@@ -104,8 +71,25 @@ export function ContactForm({ contact, onSuccess }: ContactFormProps) {
     }
   }
 
+  function onSubmit(data: FormValues) {
+    const payload = {
+      ...data,
+      email: data.email || null,
+      last_name: data.last_name || null,
+      nickname: data.nickname || null,
+      phone: data.phone || null,
+      birthday: data.birthday || null,
+      how_we_met: data.how_we_met || null,
+      location: data.location || null,
+      company: data.company || null,
+      job_title: data.job_title || null,
+      notes: data.notes || null,
+    }
+    mutation.mutate(payload as never)
+  }
+
   return (
-    <form onSubmit={form.handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <DialogHeader>
         <DialogTitle className="gradient-text-neon">
           {isEditing ? 'Edit Friend' : 'Add a Friend'}

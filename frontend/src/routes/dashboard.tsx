@@ -1,15 +1,15 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
 import { Users, MessageCircle, CalendarCheck, Bell, Phone, MessageSquare, Mail, Share2, MoreHorizontal } from 'lucide-react'
-import { dashboardApi, type Contact, type RecentInteraction } from '@/lib/api'
+import { type Contact, type RecentInteraction } from '@/lib/api'
+import { useDashboard } from '@/hooks/queries'
 import { StatsCard } from '@/components/features/StatsCard'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { InteractionForm } from '@/components/features/InteractionForm'
-import { cn } from '@/lib/utils'
+import { cn, getInitials, getAvatarColor } from '@/lib/utils'
 
 const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   call: Phone,
@@ -29,32 +29,11 @@ const typeLabels: Record<string, string> = {
   other: 'Other',
 }
 
-function getInitials(first: string, last?: string | null) {
-  return `${first[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase()
-}
-
-const avatarColors = [
-  'from-zinc-700 to-zinc-800',
-  'from-zinc-600 to-zinc-700',
-  'from-zinc-700 to-zinc-900',
-  'from-zinc-600 to-zinc-800',
-  'from-zinc-500 to-zinc-700',
-]
-
-function getAvatarColor(name: string) {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  return avatarColors[Math.abs(hash) % avatarColors.length]
-}
 
 export default function DashboardPage() {
   const [logContact, setLogContact] = useState<Contact | null>(null)
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['dashboard'],
-    queryFn: dashboardApi.get,
-    refetchInterval: 60_000,
-  })
+  const { data, isLoading } = useDashboard()
 
   if (isLoading) {
     return (

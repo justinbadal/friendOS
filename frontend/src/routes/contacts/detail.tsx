@@ -1,13 +1,11 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import {
   ArrowLeft, Edit2, Trash2, MessageCircle, Mail, Phone, MapPin,
-  Calendar, Briefcase, Heart, Hash
+  Calendar, Heart, Hash
 } from 'lucide-react'
-import { toast } from 'sonner'
-import { contactsApi, type ContactDetail } from '@/lib/api'
+import { useContact, useDeleteContact } from '@/hooks/queries'
 import { ContactForm } from '@/components/features/ContactForm'
 import { InteractionForm } from '@/components/features/InteractionForm'
 import { InteractionList } from '@/components/features/InteractionList'
@@ -16,7 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
+import { cn, getInitials, getAvatarColor } from '@/lib/utils'
 
 const frequencyLabels: Record<string, string> = {
   daily: 'Daily',
@@ -27,19 +25,6 @@ const frequencyLabels: Record<string, string> = {
   never: 'Never',
 }
 
-const avatarColors = [
-  'from-[hsl(185,100%,40%)] to-[hsl(185,100%,25%)]',
-  'from-[hsl(315,100%,50%)] to-[hsl(315,100%,35%)]',
-  'from-[hsl(270,100%,55%)] to-[hsl(270,100%,40%)]',
-  'from-[hsl(145,100%,40%)] to-[hsl(145,100%,25%)]',
-  'from-[hsl(45,100%,45%)] to-[hsl(45,100%,30%)]',
-]
-
-function getAvatarColor(name: string) {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  return avatarColors[Math.abs(hash) % avatarColors.length]
-}
 
 function InfoRow({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }) {
   return (
@@ -58,27 +43,12 @@ function InfoRow({ icon: Icon, label, value }: { icon: React.ComponentType<{ cla
 export default function ContactDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const qc = useQueryClient()
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [showLogDialog, setShowLogDialog] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
-  const { data: contact, isLoading } = useQuery({
-    queryKey: ['contact', id],
-    queryFn: () => contactsApi.get(id!),
-    enabled: !!id,
-  })
-
-  const deleteMutation = useMutation({
-    mutationFn: () => contactsApi.delete(id!),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['contacts'] })
-      qc.invalidateQueries({ queryKey: ['dashboard'] })
-      toast.success('Friend removed')
-      navigate('/contacts')
-    },
-    onError: () => toast.error('Failed to delete contact'),
-  })
+  const { data: contact, isLoading } = useContact(id)
+  const deleteMutation = useDeleteContact(() => navigate('/contacts'))
 
   if (isLoading) {
     return (
@@ -101,7 +71,7 @@ export default function ContactDetailPage() {
   }
 
   const fullName = [contact.first_name, contact.last_name].filter(Boolean).join(' ')
-  const initials = `${contact.first_name[0] ?? ''}${contact.last_name?.[0] ?? ''}`.toUpperCase()
+  const initials = getInitials(contact.first_name, contact.last_name)
   const colorClass = getAvatarColor(contact.first_name + (contact.last_name ?? ''))
 
   return (
@@ -268,7 +238,7 @@ export default function ContactDetailPage() {
               </Button>
               <Button
                 variant="destructive"
-                onClick={() => deleteMutation.mutate()}
+                onClick={() => deleteMutation.mutate(id!)}
                 disabled={deleteMutation.isPending}
               >
                 {deleteMutation.isPending ? 'Removing...' : 'Remove'}

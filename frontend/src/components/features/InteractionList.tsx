@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { formatDistanceToNow, format } from 'date-fns'
 import { Phone, MessageSquare, Users, Mail, Share2, MoreHorizontal, Trash2, Pencil } from 'lucide-react'
-import { toast } from 'sonner'
-import { interactionsApi, type Interaction, type Contact } from '@/lib/api'
+import { type Interaction, type Contact } from '@/lib/api'
+import { useDeleteInteraction } from '@/hooks/queries'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { InteractionForm } from '@/components/features/InteractionForm'
@@ -47,19 +46,8 @@ const sentimentStyles: Record<string, string> = {
 }
 
 export function InteractionList({ interactions, contactId, contact }: InteractionListProps) {
-  const qc = useQueryClient()
   const [editingInteraction, setEditingInteraction] = useState<Interaction | null>(null)
-
-  const deleteMutation = useMutation({
-    mutationFn: interactionsApi.delete,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['contact', contactId] })
-      qc.invalidateQueries({ queryKey: ['interactions', contactId] })
-      qc.invalidateQueries({ queryKey: ['dashboard'] })
-      toast.success('Interaction deleted')
-    },
-    onError: () => toast.error('Failed to delete interaction'),
-  })
+  const deleteMutation = useDeleteInteraction(contactId)
 
   if (interactions.length === 0) {
     return (

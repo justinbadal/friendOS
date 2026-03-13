@@ -5,29 +5,11 @@ import { type Contact } from '@/lib/api'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn, getInitials, getAvatarColor } from '@/lib/utils'
 
 interface ContactCardProps {
   contact: Contact
   onLogInteraction?: (contact: Contact) => void
-}
-
-function getInitials(first: string, last?: string | null) {
-  return `${first[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase()
-}
-
-const avatarColors = [
-  'from-[hsl(185,100%,40%)] to-[hsl(185,100%,25%)]',
-  'from-[hsl(315,100%,50%)] to-[hsl(315,100%,35%)]',
-  'from-[hsl(270,100%,55%)] to-[hsl(270,100%,40%)]',
-  'from-[hsl(145,100%,40%)] to-[hsl(145,100%,25%)]',
-  'from-[hsl(45,100%,45%)] to-[hsl(45,100%,30%)]',
-]
-
-function getAvatarColor(name: string) {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  return avatarColors[Math.abs(hash) % avatarColors.length]
 }
 
 export function ContactCard({ contact, onLogInteraction }: ContactCardProps) {
