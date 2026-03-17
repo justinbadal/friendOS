@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Search, X } from 'lucide-react'
+import { Plus, Search, X, Users } from 'lucide-react'
 import { type Contact } from '@/lib/api'
 import { useContacts, useTags } from '@/hooks/queries'
 import { ContactCard } from '@/components/features/ContactCard'
@@ -27,12 +27,15 @@ export default function ContactsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(var(--foreground))]">Friends</h1>
+          <h1 className="text-2xl font-semibold gradient-text-neon">Friends</h1>
           <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">
             {contacts.length} {contacts.length === 1 ? 'friend' : 'friends'} in your circle
           </p>
         </div>
-        <Button onClick={() => setShowAddDialog(true)}>
+        <Button
+          onClick={() => setShowAddDialog(true)}
+          className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:shadow-[0_0_20px_hsla(185,100%,50%,0.4)] gap-2"
+        >
           <Plus className="h-4 w-4" />
           Add Friend
         </Button>
@@ -102,11 +105,15 @@ export default function ContactsPage() {
         </div>
       ) : contacts.length === 0 ? (
         <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-16 text-center space-y-3">
+          <Users className="h-10 w-10 text-[hsl(var(--foreground-subtle))] mx-auto" />
           <p className="text-[hsl(var(--muted-foreground))]">
             {search || selectedTagId ? 'No friends match your filters.' : "You haven't added any friends yet."}
           </p>
           {!search && !selectedTagId && (
-            <Button onClick={() => setShowAddDialog(true)}>
+            <Button
+              onClick={() => setShowAddDialog(true)}
+              className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:shadow-[0_0_20px_hsla(185,100%,50%,0.4)] gap-2"
+            >
               <Plus className="h-4 w-4" />
               Add your first friend
             </Button>

@@ -93,17 +93,18 @@ function TagForm({ initial, onSave, onClose, loading }: TagFormProps) {
 export default function TagsPage() {
   const [showCreate, setShowCreate] = useState(false)
   const [editing, setEditing] = useState<Tag | null>(null)
+  const [deleting, setDeleting] = useState<Tag | null>(null)
 
   const { data: tags = [], isLoading } = useTags()
   const createMutation = useCreateTag(() => setShowCreate(false))
   const updateMutation = useUpdateTag(() => setEditing(null))
-  const deleteMutation = useDeleteTag()
+  const deleteMutation = useDeleteTag(() => setDeleting(null))
 
   return (
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-[hsl(var(--foreground))]">Tags</h1>
+          <h1 className="text-2xl font-semibold gradient-text-neon">Tags</h1>
           <p className="text-sm text-[hsl(var(--muted-foreground))] mt-0.5">
             Organise your friends with colour-coded labels
           </p>
@@ -162,9 +163,7 @@ export default function TagsPage() {
                     size="icon"
                     variant="ghost"
                     className="h-8 w-8 hover:text-[hsl(var(--destructive))]"
-                    onClick={() => {
-                      if (confirm(`Delete tag "${tag.name}"?`)) deleteMutation.mutate(tag.id)
-                    }}
+                    onClick={() => setDeleting(tag)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
@@ -203,6 +202,30 @@ export default function TagsPage() {
               loading={updateMutation.isPending}
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirm Dialog */}
+      <Dialog open={!!deleting} onOpenChange={open => !open && setDeleting(null)}>
+        <DialogContent className="max-w-sm">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold">Delete "{deleting?.name}"?</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">
+                This will remove the tag from all contacts. This cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Button variant="outline" onClick={() => setDeleting(null)}>Cancel</Button>
+              <Button
+                variant="destructive"
+                disabled={deleteMutation.isPending}
+                onClick={() => deleteMutation.mutate(deleting!.id)}
+              >
+                {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

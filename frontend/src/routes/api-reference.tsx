@@ -384,7 +384,7 @@ export default function ApiReferencePage() {
     <div className="p-8 space-y-8 max-w-4xl">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-medium text-white">API Reference</h1>
+          <h1 className="text-2xl font-semibold gradient-text-neon">API Reference</h1>
           <p className="text-sm text-zinc-500 mt-1">Base URL: <code className="text-zinc-400 font-mono">https://friends.servrar.net/api/v1</code></p>
         </div>
         <button

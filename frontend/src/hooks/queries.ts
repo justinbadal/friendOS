@@ -19,10 +19,21 @@ import {
   interactionsApi,
   tagsApi,
   dashboardApi,
+  type Contact,
+  type Interaction,
   type ContactCreate,
   type InteractionCreate,
   type TagCreate,
 } from '@/lib/api'
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+type QC = ReturnType<typeof useQueryClient>
+
+function invalidateContacts(qc: QC) {
+  qc.invalidateQueries({ queryKey: QUERY_KEYS.contacts.all() })
+  qc.invalidateQueries({ queryKey: QUERY_KEYS.dashboard.all() })
+}
 
 // ─── Query keys ──────────────────────────────────────────────────────────────
 
@@ -79,10 +90,18 @@ export function useCreateContact(onSuccess?: () => void) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (data: ContactCreate) => contactsApi.create(data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.contacts.all() })
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.dashboard.all() })
-      toast.success('Friend added!')
+    onSuccess: (contact: Contact) => {
+      invalidateContacts(qc)
+      toast.success('Friend added!', {
+        duration: 5000,
+        action: {
+          label: 'Undo',
+          onClick: async () => {
+            await contactsApi.delete(contact.id)
+            invalidateContacts(qc)
+          },
+        },
+      })
       onSuccess?.()
     },
     onError: (err: Error) => toast.error(`Error: ${err.message}`),
@@ -94,8 +113,7 @@ export function useUpdateContact(id: string, onSuccess?: () => void) {
   return useMutation({
     mutationFn: (data: Partial<ContactCreate>) => contactsApi.update(id, data),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.contacts.all() })
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.dashboard.all() })
+      invalidateContacts(qc)
       toast.success('Friend updated!')
       onSuccess?.()
     },
@@ -108,8 +126,7 @@ export function useDeleteContact(onSuccess?: () => void) {
   return useMutation({
     mutationFn: (id: string) => contactsApi.delete(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.contacts.all() })
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.dashboard.all() })
+      invalidateContacts(qc)
       toast.success('Friend removed')
       onSuccess?.()
     },
@@ -124,10 +141,20 @@ export function useCreateInteraction(contactId: string, onSuccess?: () => void) 
   return useMutation({
     mutationFn: (data: Omit<InteractionCreate, 'contact_id'>) =>
       interactionsApi.create({ ...data, contact_id: contactId }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.contacts.all() })
-      qc.invalidateQueries({ queryKey: QUERY_KEYS.dashboard.all() })
-      toast.success('Interaction logged!')
+    onSuccess: (interaction: Interaction) => {
+      invalidateContacts(qc)
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.contacts.detail(contactId) })
+      toast.success('Interaction logged!', {
+        duration: 5000,
+        action: {
+          label: 'Undo',
+          onClick: async () => {
+            await interactionsApi.delete(interaction.id)
+            invalidateContacts(qc)
+            qc.invalidateQueries({ queryKey: QUERY_KEYS.contacts.detail(contactId) })
+          },
+        },
+      })
       onSuccess?.()
     },
     onError: (err: Error) => toast.error(`Error: ${err.message}`),

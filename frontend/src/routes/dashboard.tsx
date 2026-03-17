@@ -61,7 +61,7 @@ export default function DashboardPage() {
     <div className="p-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-medium text-[hsl(var(--foreground))]">Dashboard</h1>
+        <h1 className="text-2xl font-semibold gradient-text-neon">Dashboard</h1>
         <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">Stay connected with the people who matter</p>
       </div>
 
@@ -190,8 +190,9 @@ export default function DashboardPage() {
         <div className="space-y-3">
           <h2 className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Recent Activity</h2>
           {stats.recent_interactions.length === 0 ? (
-            <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-8 text-center text-sm text-[hsl(var(--muted-foreground))]">
-              No interactions yet. Start connecting!
+            <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-8 text-center space-y-2">
+              <MessageCircle className="h-8 w-8 text-[hsl(var(--foreground-subtle))] mx-auto" />
+              <p className="text-sm text-[hsl(var(--muted-foreground))]">No interactions yet. Start connecting!</p>
             </div>
           ) : (
             <div className="space-y-1 max-h-96 overflow-y-auto">

@@ -98,7 +98,7 @@ export default function ContactDetailPage() {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-[hsl(var(--foreground))]">{fullName}</h1>
+                <h1 className="text-2xl font-bold gradient-text-neon">{fullName}</h1>
                 {contact.nickname && (
                   <p className="text-sm text-[hsl(var(--muted-foreground))]">
                     "{contact.nickname}"
