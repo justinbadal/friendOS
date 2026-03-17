@@ -197,3 +197,21 @@
 ::-webkit-scrollbar-track { background: hsl(var(--background)); }
 ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: hsl(var(--border-hover)); }
+
+/* ── iOS: prevent auto-zoom on input focus (triggered when font-size < 16px) */
+@supports (-webkit-touch-callout: none) {
+  input, textarea, select {
+    font-size: max(16px, 1em) !important;
+  }
+}
+
+/* ── Safe area / iOS liquid-glass edge extension ───────────────────────── */
+.safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.safe-area-top    { padding-top:    env(safe-area-inset-top,    0px); }
+.safe-area-inset  {
+  padding-top:    env(safe-area-inset-top,    0px);
+  padding-right:  env(safe-area-inset-right,  0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left:   env(safe-area-inset-left,   0px);
+}
+.fab-safe-bottom { bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); }

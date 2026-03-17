@@ -112,14 +112,14 @@ function CodeBlock({ code }: { code: string }) {
   }
 
   return (
-    <div className="relative mt-2 rounded-lg bg-black border border-zinc-800 overflow-hidden">
+    <div className="relative mt-2 rounded-lg bg-[hsl(var(--background))] border border-[hsl(var(--border))] overflow-hidden">
       <button
         onClick={copy}
-        className="absolute top-2 right-2 p-1.5 rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors"
+        className="absolute top-2 right-2 p-1.5 rounded-md text-[hsl(var(--foreground-subtle))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] transition-colors"
       >
-        {copied ? <Check className="h-3.5 w-3.5 text-green-400" /> : <Copy className="h-3.5 w-3.5" />}
+        {copied ? <Check className="h-3.5 w-3.5 text-[hsl(var(--success))]" /> : <Copy className="h-3.5 w-3.5" />}
       </button>
-      <pre className="p-4 text-xs text-zinc-300 font-mono overflow-x-auto leading-relaxed whitespace-pre">
+      <pre className="p-4 text-xs text-[hsl(var(--foreground-muted))] font-mono overflow-x-auto leading-relaxed whitespace-pre">
         {code}
       </pre>
     </div>
@@ -132,36 +132,36 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
 
   return (
     <div className={cn(
-      'rounded-xl border bg-zinc-900/40 transition-colors',
-      available ? 'border-zinc-800 hover:border-zinc-700' : 'border-zinc-800/50 opacity-60'
+      'rounded-xl border bg-[hsl(var(--card))] transition-colors',
+      available ? 'border-[hsl(var(--border))] hover:border-[hsl(var(--border-hover))]' : 'border-[hsl(var(--border))] opacity-60'
     )}>
       {/* Header */}
       <div className="flex items-start gap-4 p-5">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-800 border border-zinc-700">
-          <Smartphone className="h-5 w-5 text-zinc-300" />
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))]">
+          <Smartphone className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-medium text-zinc-100">{plugin.name}</h3>
-            <span className="text-xs px-2 py-0.5 rounded-full border border-zinc-700 text-zinc-500">
+            <h3 className="font-medium text-[hsl(var(--foreground))]">{plugin.name}</h3>
+            <span className="text-xs px-2 py-0.5 rounded-full border border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]">
               {plugin.category}
             </span>
             {available ? (
-              <span className="text-xs px-2 py-0.5 rounded-full border border-green-900/60 bg-green-900/20 text-green-400 flex items-center gap-1">
+              <span className="text-xs px-2 py-0.5 rounded-full border border-[hsl(var(--success-muted)/0.4)] bg-[hsl(var(--success)/0.08)] text-[hsl(var(--success))] flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3" /> Available
               </span>
             ) : (
-              <span className="text-xs px-2 py-0.5 rounded-full border border-zinc-700 text-zinc-600 flex items-center gap-1">
+              <span className="text-xs px-2 py-0.5 rounded-full border border-[hsl(var(--border))] text-[hsl(var(--foreground-subtle))] flex items-center gap-1">
                 <Circle className="h-3 w-3" /> Coming soon
               </span>
             )}
           </div>
-          <p className="text-sm text-zinc-500 mt-1">{plugin.description}</p>
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">{plugin.description}</p>
         </div>
         {available && plugin.steps.length > 0 && (
           <button
             onClick={() => setOpen(o => !o)}
-            className="shrink-0 flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors border border-zinc-700 hover:border-zinc-600 rounded-lg px-3 py-1.5"
+            className="shrink-0 flex items-center gap-1.5 text-xs text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors border border-[hsl(var(--border))] hover:border-[hsl(var(--border-hover))] rounded-lg px-3 py-1.5"
           >
             {open ? 'Hide' : 'Setup'}
             {open ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
@@ -171,15 +171,15 @@ function PluginCard({ plugin }: { plugin: Plugin }) {
 
       {/* Steps */}
       {open && plugin.steps.length > 0 && (
-        <div className="border-t border-zinc-800 px-5 py-4 space-y-5">
+        <div className="border-t border-[hsl(var(--border))] px-5 py-4 space-y-5">
           {plugin.steps.map(step => (
             <div key={step.n} className="flex gap-4">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-800 border border-zinc-700 text-xs font-medium text-zinc-300 mt-0.5">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--muted))] border border-[hsl(var(--border))] text-xs font-medium text-[hsl(var(--foreground))] mt-0.5">
                 {step.n}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-zinc-200">{step.title}</p>
-                <p className="text-sm text-zinc-500 mt-0.5">{step.detail}</p>
+                <p className="text-sm font-medium text-[hsl(var(--foreground))]">{step.title}</p>
+                <p className="text-sm text-[hsl(var(--muted-foreground))] mt-0.5">{step.detail}</p>
                 {step.code && <CodeBlock code={step.code} />}
               </div>
             </div>
@@ -194,8 +194,8 @@ export default function PluginsPage() {
   return (
     <div className="p-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-medium text-white">Plugins</h1>
-        <p className="text-sm text-zinc-500 mt-1">
+        <h1 className="text-2xl font-medium text-[hsl(var(--foreground))]">Plugins</h1>
+        <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">
           Extend friendOS with integrations and automations
         </p>
       </div>

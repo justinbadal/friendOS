@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
 import { Users, MessageCircle, CalendarCheck, Bell, Phone, MessageSquare, Mail, Share2, MoreHorizontal } from 'lucide-react'
-import { type Contact, type RecentInteraction } from '@/lib/api'
+import { type Contact } from '@/lib/api'
 import { useDashboard } from '@/hooks/queries'
 import { StatsCard } from '@/components/features/StatsCard'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -29,7 +29,6 @@ const typeLabels: Record<string, string> = {
   other: 'Other',
 }
 
-
 export default function DashboardPage() {
   const [logContact, setLogContact] = useState<Contact | null>(null)
 
@@ -50,7 +49,7 @@ export default function DashboardPage() {
 
   if (!data) {
     return (
-      <div className="p-8 text-sm text-zinc-500">
+      <div className="p-8 text-sm text-[hsl(var(--muted-foreground))]">
         Failed to load dashboard. Is the backend running?
       </div>
     )
@@ -62,8 +61,8 @@ export default function DashboardPage() {
     <div className="p-8 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-medium text-white">Dashboard</h1>
-        <p className="text-sm text-zinc-500 mt-1">Stay connected with the people who matter</p>
+        <h1 className="text-2xl font-medium text-[hsl(var(--foreground))]">Dashboard</h1>
+        <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">Stay connected with the people who matter</p>
       </div>
 
       {/* Stats Grid */}
@@ -96,8 +95,8 @@ export default function DashboardPage() {
       {stats.recent_contacts.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-zinc-400">Friends</h2>
-            <Link to="/contacts" className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
+            <h2 className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Friends</h2>
+            <Link to="/contacts" className="text-xs text-[hsl(var(--foreground-subtle))] hover:text-[hsl(var(--muted-foreground))] transition-colors">
               view all
             </Link>
           </div>
@@ -110,7 +109,7 @@ export default function DashboardPage() {
                 <Link
                   key={contact.id}
                   to={`/contacts/${contact.id}`}
-                  className="flex items-center gap-2.5 rounded-lg border border-zinc-800/50 bg-zinc-900/30 px-3 py-2.5 hover:border-zinc-700 hover:bg-zinc-900/50 transition-colors group"
+                  className="flex items-center gap-2.5 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 hover:border-[hsl(var(--border-hover))] hover:bg-[hsl(var(--card-elevated))] transition-colors group"
                 >
                   <Avatar className="h-7 w-7 shrink-0">
                     {contact.photo_url && <AvatarImage src={contact.photo_url} alt={fullName} />}
@@ -119,13 +118,13 @@ export default function DashboardPage() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
-                    <p className="text-sm text-zinc-200 group-hover:text-white transition-colors truncate">{fullName}</p>
+                    <p className="text-sm text-[hsl(var(--foreground))] group-hover:text-[hsl(var(--foreground))] transition-colors truncate">{fullName}</p>
                     {contact.last_contacted_at ? (
-                      <p className="text-xs text-zinc-600 truncate">
+                      <p className="text-xs text-[hsl(var(--foreground-subtle))] truncate">
                         {formatDistanceToNow(new Date(contact.last_contacted_at), { addSuffix: true })}
                       </p>
                     ) : (
-                      <p className="text-xs text-zinc-700 truncate">never contacted</p>
+                      <p className="text-xs text-[hsl(var(--foreground-subtle))] truncate">never contacted</p>
                     )}
                   </div>
                 </Link>
@@ -140,8 +139,8 @@ export default function DashboardPage() {
         {stats.overdue_contacts.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-medium text-zinc-400">Need to Reach Out</h2>
-              <span className="text-xs text-zinc-500">{stats.overdue_contacts.length} overdue</span>
+              <h2 className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Need to Reach Out</h2>
+              <span className="text-xs text-[hsl(var(--muted-foreground))]">{stats.overdue_contacts.length} overdue</span>
             </div>
             <div className="space-y-1 max-h-96 overflow-y-auto">
               {stats.overdue_contacts.map((contact) => {
@@ -151,7 +150,7 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={contact.id}
-                    className="flex items-center gap-3 rounded-lg border border-zinc-800/50 bg-zinc-900/30 px-3 py-2.5 hover:border-zinc-700 hover:bg-zinc-900/50 transition-colors"
+                    className="flex items-center gap-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 hover:border-[hsl(var(--border-hover))] hover:bg-[hsl(var(--card-elevated))] transition-colors"
                   >
                     <Avatar className="h-7 w-7 shrink-0">
                       {contact.photo_url && <AvatarImage src={contact.photo_url} alt={fullName} />}
@@ -162,11 +161,11 @@ export default function DashboardPage() {
                     <div className="flex-1 min-w-0">
                       <Link
                         to={`/contacts/${contact.id}`}
-                        className="text-sm text-zinc-200 hover:text-white transition-colors truncate block"
+                        className="text-sm text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))] transition-colors truncate block"
                       >
                         {fullName}
                       </Link>
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-[hsl(var(--muted-foreground))]">
                         {contact.last_contacted_at
                           ? formatDistanceToNow(new Date(contact.last_contacted_at), { addSuffix: true })
                           : 'Never contacted'}
@@ -189,9 +188,9 @@ export default function DashboardPage() {
 
         {/* Recent Activity */}
         <div className="space-y-3">
-          <h2 className="text-sm font-medium text-zinc-400">Recent Activity</h2>
+          <h2 className="text-sm font-medium text-[hsl(var(--muted-foreground))]">Recent Activity</h2>
           {stats.recent_interactions.length === 0 ? (
-            <div className="rounded-lg border border-zinc-800/50 bg-zinc-900/30 p-8 text-center text-sm text-zinc-600">
+            <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-8 text-center text-sm text-[hsl(var(--muted-foreground))]">
               No interactions yet. Start connecting!
             </div>
           ) : (
@@ -204,7 +203,7 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={interaction.id}
-                    className="flex items-center gap-3 rounded-lg border border-zinc-800/50 bg-zinc-900/30 px-3 py-2.5 hover:border-zinc-700 hover:bg-zinc-900/50 transition-colors"
+                    className="flex items-center gap-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 hover:border-[hsl(var(--border-hover))] hover:bg-[hsl(var(--card-elevated))] transition-colors"
                   >
                     <Avatar className="h-7 w-7 shrink-0">
                       {interaction.contact_photo_url && (
@@ -218,21 +217,21 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-1.5">
                         <Link
                           to={`/contacts/${interaction.contact_id}`}
-                          className="text-sm text-zinc-200 hover:text-white transition-colors"
+                          className="text-sm text-[hsl(var(--foreground))] hover:text-[hsl(var(--primary))] transition-colors"
                         >
                           {fullName}
                         </Link>
-                        <span className="text-zinc-600">·</span>
-                        <span className="text-xs text-zinc-500 flex items-center gap-1">
+                        <span className="text-[hsl(var(--foreground-subtle))]">·</span>
+                        <span className="text-xs text-[hsl(var(--muted-foreground))] flex items-center gap-1">
                           <Icon className="h-3 w-3" />
                           {typeLabels[interaction.interaction_type]}
                         </span>
                       </div>
                       {interaction.notes && (
-                        <p className="text-xs text-zinc-600 truncate">{interaction.notes}</p>
+                        <p className="text-xs text-[hsl(var(--foreground-subtle))] truncate">{interaction.notes}</p>
                       )}
                     </div>
-                    <span className="text-xs text-zinc-600 shrink-0">
+                    <span className="text-xs text-[hsl(var(--foreground-subtle))] shrink-0">
                       {formatDistanceToNow(new Date(interaction.interacted_at), { addSuffix: true })}
                     </span>
                   </div>

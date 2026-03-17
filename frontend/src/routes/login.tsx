@@ -18,24 +18,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center bg-ambient">
+    <div className="min-h-screen bg-[hsl(var(--background))] flex items-center justify-center bg-ambient">
       <div className="w-full max-w-sm space-y-8 px-6">
         {/* Logo */}
         <div className="flex flex-col items-center gap-3">
-          <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-zinc-900 border border-zinc-800 shadow-[0_0_20px_hsla(185,100%,50%,0.08)]">
-            <Heart className="h-5 w-5 text-zinc-300" />
+          <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-[0_0_20px_hsla(185,100%,50%,0.08)]">
+            <Heart className="h-5 w-5 text-[hsl(var(--secondary))]" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-medium text-white tracking-wide">friendOS</h1>
-            <p className="text-xs text-zinc-600 mt-1">personal crm</p>
+            <h1 className="text-xl font-medium text-[hsl(var(--foreground))] tracking-wide">friendOS</h1>
+            <p className="text-xs text-[hsl(var(--foreground-subtle))] mt-1">personal crm</p>
           </div>
         </div>
 
         {/* Card */}
-        <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-6 space-y-5 shadow-[0_0_40px_hsla(185,100%,50%,0.04)]">
+        <div className="bg-[hsl(var(--card))] border border-[hsl(var(--border))] rounded-xl p-6 space-y-5 shadow-[0_0_40px_hsla(185,100%,50%,0.04)]">
           <div>
-            <p className="text-sm font-medium text-zinc-200">Sign in</p>
-            <p className="text-xs text-zinc-600 mt-1">Authenticate with your Pocket-ID passkey</p>
+            <p className="text-sm font-medium text-[hsl(var(--foreground))]">Sign in</p>
+            <p className="text-xs text-[hsl(var(--foreground-subtle))] mt-1">Authenticate with your Pocket-ID passkey</p>
           </div>
 
           <Button
